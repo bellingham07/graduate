@@ -1,18 +1,25 @@
 <script setup>
 import {reactive} from "vue";
+import {Request} from "@/request/request";
+import router from "@/router";
+import {ErrorInfo, SuccessInfo} from "@/utils/util";
 
-const form =reactive({
+const form = reactive({
   phone: '',
   password: '',
   confirm_password: ''
 })
 
-const register=()=>{
-  console.log(form.phone)
-  console.log(form.password)
-  console.log(form.confirm_password)
+const register = () => {
+  Request.post("/user/register",JSON.stringify(form)).then((res) => {
+    if (res.data.code === 200) {
+      SuccessInfo("注册成功，请切换登录页面")
+      router.push('/')
+    } else {
+      ErrorInfo(res.data.msg)
+    }
+  })
 }
-
 </script>
 
 <template>

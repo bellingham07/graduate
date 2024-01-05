@@ -1,18 +1,29 @@
 <script setup>
 import {reactive, ref} from 'vue'
 import router from "@/router";
-import {request} from "@/request/request";
+import {Request} from "@/request/request";
+import {ErrorInfo, SuccessInfo} from "@/utils/util";
 
 const form = reactive({
-  account: '',
+  phone: '',
   password: ''
 })
 
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
+  },
+};
+
 const login = () => {
-  request.post('/login', form).then((res) => {
+  Request.post('/user/login', form).then((res) => {
     if (res.data.code === 200) {
-      // router.push('/eshop')
-      localStorage.setItem('token', res.data.data.token)
+      localStorage.setItem('token', res.data.data.access_token)
+      SuccessInfo("登录成功")
+      router.push('/index/green')
+    }else{
+      ErrorInfo(res.data.msg)
     }
   })
 }
@@ -20,8 +31,8 @@ const login = () => {
 
 <template>
   <div class="login">
-    <el-input class="login-button" v-model="form.account"
-              placeholder="账号"/>
+    <el-input class="login-button" v-model="form.phone"
+              placeholder="手机号"/>
     <el-input type="password" class="login-button"
               v-model="form.password" placeholder="密码"/>
     <br>
@@ -32,6 +43,7 @@ const login = () => {
     <router-link to="/reg">没有账号？立即注册</router-link>
   </div>
 </template>
+
 <style scoped>
 .login-button {
   width: 80%;
@@ -53,8 +65,9 @@ const login = () => {
 }
 
 a {
-  width: 20%;
-  margin-top: 20px;
-  margin-left: 40%;
+  width: 80%;
+  height: 60px;
+  margin-left: 43%;
+  margin-top: 10px;
 }
 </style>
